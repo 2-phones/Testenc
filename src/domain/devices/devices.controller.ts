@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AdbService } from '../adb/adb.service';
 import { DeviceDetail } from '../adb/interfaces/device-detail.interface';
 
@@ -12,5 +12,20 @@ export class DevicesController {
   @Get()
   async getDevices(): Promise<DeviceDetail[]> {
     return this.adbService.device();
+  }
+
+  @Get('details')
+  async getDevicesDetail() {
+    const devices = await this.adbService.getDevicesWithDetails();
+    console.log(devices);
+    return devices;
+  }
+
+@Post('activationtime')
+  async getActivationTime(@Body() body: { serial: string }) {
+    const { serial } = body;
+    const activationTime = await this.adbService.measureFullCycleTime(serial);
+    console.log(activationTime);
+    return activationTime;
   }
 }
